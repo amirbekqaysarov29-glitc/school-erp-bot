@@ -1,0 +1,7 @@
+aiogram
+python-dotenv
+openpyxl
+reportlab
+fastapi
+uvicorn
+jinja2
