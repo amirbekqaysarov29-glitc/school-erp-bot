@@ -1829,69 +1829,33 @@ def export_report_pdf(period):
 
 def layout(title, body, role, active='dashboard'):
     admin = role=='admin'
-    items=[('dashboard','/','🏠','Dashboard'),('students','/students','👥','O‘quvchilar'),('attendance','/attendance','✅','Davomat'),('schedule','/schedule','📅','Dars jadvali'),('reports','/reports','📊','Hisobotlar')]
+    items=[('dashboard','/','⌂','Dashboard'),('students','/students','👥','O‘quvchilar'),('attendance','/attendance','✓','Davomat'),('schedule','/schedule','▦','Dars jadvali'),('reports','/reports','◔','Hisobotlar')]
     if admin:
-        items += [('teachers','/teachers','👨‍🏫','O‘qituvchilar'),('subjects','/subjects','📚','Fanlar'),('payments','/payments','💳','Oylik to‘lovlar')]
+        items += [('teachers','/teachers','♟','O‘qituvchilar'),('subjects','/subjects','▤','Fanlar'),('payments','/payments','₽','Oylik to‘lovlar')]
     else:
-        items += [('payments','/payments','💳','To‘lovlarni ko‘rish')]
+        items += [('payments','/payments','₽','To‘lovlarni ko‘rish')]
     nav=''.join(f'<a class="nav {"on" if active==k else ""}" href="{u}"><span class="nav-icon">{i}</span><span>{l}</span></a>' for k,u,i,l in items)
     return f'''<!doctype html><html lang="uz"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{esc(title)} — School ERP</title>
     <style>
-    *{{box-sizing:border-box}}
-    :root{{--bg:#f4f7fb;--ink:#12213f;--muted:#6b7a90;--line:#e6edf5;--blue:#2563eb;--navy:#0b1f4d}}
+    *{{box-sizing:border-box}}:root{{--bg:#f5f7fb;--ink:#172033;--muted:#718096;--line:#e8edf5;--blue:#2166f3;--green:#21b66f;--orange:#f59e0b;--red:#e94b67}}
     body{{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--ink)}}
-    .side{{position:fixed;inset:0 auto 0 0;width:258px;background:linear-gradient(180deg,#071a45 0%,#0b397f 55%,#0d55b8 100%);color:#fff;padding:22px 15px;box-shadow:10px 0 35px #102b5520;z-index:5}}
-    .brand{{display:flex;align-items:center;gap:10px;font-size:22px;font-weight:900;padding:12px;margin-bottom:12px;letter-spacing:-.3px}}
-    .brand-mark{{width:42px;height:42px;border-radius:13px;background:#ffffff18;display:grid;place-items:center;font-size:24px;box-shadow:inset 0 1px #ffffff20}}
-    .role{{margin:0 8px 18px;padding:12px 13px;border-radius:14px;background:#ffffff12;border:1px solid #ffffff12;font-size:12px;color:#cfe0ff}}
-    .role b{{display:block;color:#fff;margin-top:3px;font-size:13px}}
-    .nav{{display:flex;align-items:center;gap:10px;text-decoration:none;color:#dbeafe;padding:12px 13px;border-radius:13px;margin:5px 0;font-weight:700;font-size:14px;transition:.18s}}
-    .nav-icon{{width:25px;text-align:center;font-size:17px}}
-    .nav:hover{{background:#ffffff14;color:#fff;transform:translateX(2px)}}
-    .nav.on{{background:linear-gradient(90deg,#2563eb,#3b82f6);color:#fff;box-shadow:0 10px 25px #0002}}
-    .logout{{position:absolute;bottom:18px;left:15px;right:15px;background:#ffffff0e}}
-    .main{{margin-left:258px;padding:28px 32px 45px;max-width:1600px}}
-    .topbar{{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:22px}}
-    .eyebrow{{font-size:12px;font-weight:800;color:#2563eb;text-transform:uppercase;letter-spacing:1.1px;margin-bottom:5px}}
-    h1{{margin:0;font-size:31px;letter-spacing:-.7px}} .subtitle,.muted{{color:var(--muted)}}
-    .subtitle{{margin-top:7px;font-size:14px}}
-    .welcome{{background:linear-gradient(135deg,#0b2d73,#1769e8);color:white;border-radius:24px;padding:23px 25px;box-shadow:0 18px 40px #174ea830;position:relative;overflow:hidden}}
-    .welcome:after{{content:"";position:absolute;width:220px;height:220px;border-radius:50%;right:-75px;top:-100px;background:#ffffff12}}
-    .welcome h2{{margin:0;font-size:24px}} .welcome p{{margin:7px 0 0;color:#dbeafe;font-size:13px}}
-    .quick{{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px;position:relative;z-index:1}}
-    .quick a{{text-decoration:none;color:#fff;background:#ffffff16;border:1px solid #ffffff25;padding:8px 11px;border-radius:10px;font-size:12px;font-weight:800}}
-    .cards{{display:grid;grid-template-columns:repeat(4,minmax(170px,1fr));gap:15px;margin:20px 0}}
-    .stat{{position:relative;overflow:hidden;border-radius:19px;padding:19px;color:white;min-height:125px;box-shadow:0 12px 28px #18345b18}}
-    .stat .label{{font-size:13px;font-weight:800;opacity:.92}} .stat .value{{font-size:30px;font-weight:900;margin-top:12px;letter-spacing:-1px}}
-    .stat .mini{{font-size:11px;margin-top:7px;opacity:.88}} .stat .icon{{position:absolute;right:15px;top:14px;font-size:28px;opacity:.9}}
-    .stat:after{{content:"";position:absolute;width:110px;height:110px;border-radius:50%;right:-35px;bottom:-55px;background:#fff1}}
-    .blue{{background:linear-gradient(135deg,#2563eb,#06a6f2)}} .purple{{background:linear-gradient(135deg,#5b21b6,#8b5cf6)}} .green{{background:linear-gradient(135deg,#047857,#22c55e)}} .red{{background:linear-gradient(135deg,#be123c,#f43f5e)}} .orange{{background:linear-gradient(135deg,#c2410c,#f59e0b)}} .cyan{{background:linear-gradient(135deg,#0e7490,#06b6d4)}} .pink{{background:linear-gradient(135deg,#be185d,#ec4899)}} .indigo{{background:linear-gradient(135deg,#3730a3,#6366f1)}}
-    .grid2{{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,.85fr);gap:18px}}
-    .panel{{background:#fff;border-radius:20px;padding:20px;box-shadow:0 9px 30px #17325d0c;border:1px solid #edf2f7}}
-    .panel-head{{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:15px}} .panel-head h3{{margin:0;font-size:17px}} .panel-head small{{color:var(--muted)}}
-    .bar-chart{{height:245px;display:flex;align-items:flex-end;gap:13px;padding:16px 7px 0;border-bottom:1px solid var(--line)}}
-    .bar-item{{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:7px;min-width:35px}}
-    .bar-track{{height:175px;width:100%;display:flex;align-items:flex-end;justify-content:center;gap:4px}}
-    .bar{{width:42%;min-width:7px;border-radius:7px 7px 2px 2px;transition:.2s;box-shadow:0 5px 12px #2563eb18}}
-    .bar:hover{{transform:translateY(-4px)}} .bar.present{{background:linear-gradient(180deg,#22c55e,#16a34a)}} .bar.absent{{background:linear-gradient(180deg,#fb7185,#e11d48)}} .bar.late{{background:linear-gradient(180deg,#fbbf24,#f59e0b)}}
-    .bar-label{{font-size:11px;color:#6b7a90;font-weight:800}} .bar-num{{font-size:10px;color:#94a3b8}}
-    .legend{{display:flex;gap:15px;flex-wrap:wrap;margin-top:12px;font-size:11px;color:#64748b;font-weight:700}} .dot{{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}} .d-green{{background:#22c55e}} .d-red{{background:#e11d48}} .d-orange{{background:#f59e0b}}
-    .donut-wrap{{display:flex;align-items:center;justify-content:center;gap:22px;min-height:245px}}
-    .donut{{width:172px;height:172px;border-radius:50%;background:conic-gradient(#22c55e 0 var(--present),#e11d48 var(--present) var(--absent),#f59e0b var(--absent) 100%);position:relative;display:grid;place-items:center;box-shadow:0 12px 30px #17325d18}}
-    .donut:after{{content:"";width:108px;height:108px;border-radius:50%;background:#fff;box-shadow:inset 0 0 0 1px #edf2f7}}
-    .donut-center{{position:absolute;z-index:2;text-align:center}} .donut-center strong{{display:block;font-size:26px}} .donut-center span{{font-size:10px;color:#7b8798;font-weight:800}}
-    .donut-legend{{display:grid;gap:13px}} .legend-row{{display:flex;align-items:center;gap:8px;font-size:12px;color:#64748b}} .legend-row b{{color:#12213f;margin-left:auto}}
-    .rank-list{{display:grid;gap:10px}} .rank{{display:grid;grid-template-columns:32px 1fr auto;align-items:center;gap:10px;padding:11px 12px;border:1px solid #edf2f7;border-radius:13px;background:#fbfdff}}
-    .rank-no{{width:30px;height:30px;border-radius:10px;background:#fee2e2;color:#be123c;display:grid;place-items:center;font-weight:900;font-size:12px}} .rank-name{{font-weight:800;font-size:13px}} .rank-class{{font-size:11px;color:#94a3b8;margin-top:2px}} .rank-count{{font-weight:900;color:#e11d48}}
-    .action-grid{{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}} .action{{text-decoration:none;padding:14px;border-radius:14px;border:1px solid #e7edf5;background:#f8fafc;color:#172b4d;font-weight:800;font-size:12px;transition:.18s}} .action:hover{{transform:translateY(-2px);box-shadow:0 8px 18px #17325d12;background:#fff}}
-    .form{{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}} input,select{{width:100%;padding:12px;border:1px solid #d5dfec;border-radius:10px;font-size:14px}} button,.btn{{display:inline-block;border:0;background:#1261e8;color:white;padding:11px 15px;border-radius:10px;text-decoration:none;cursor:pointer;font-weight:700}} .danger{{background:#ef4444}} .green-btn{{background:#059669}} .gray{{background:#64748b}}
-    .table{{overflow:auto;background:white;border-radius:16px;box-shadow:0 8px 30px #17325d10}} table{{width:100%;border-collapse:collapse;min-width:700px}} th,td{{padding:12px;border-bottom:1px solid #e7edf5;text-align:left;font-size:14px}} th{{background:#0a285c;color:white}} .badge{{padding:5px 9px;border-radius:999px;font-weight:700;font-size:12px}} .present{{background:#dcfce7;color:#166534}} .absent{{background:#fee2e2;color:#991b1b}} .late{{background:#fef3c7;color:#92400e}} .tabs{{display:flex;gap:8px;flex-wrap:wrap;margin:15px 0}} .tabs a{{padding:9px 13px;background:white;border-radius:10px;text-decoration:none}} .tabs a.sel{{background:#1261e8;color:white}}
-    @media(max-width:1100px){{.cards{{grid-template-columns:repeat(2,1fr)}}.grid2{{grid-template-columns:1fr}}}}
-    @media(max-width:800px){{.side{{position:static;width:100%}}.logout{{position:static;margin-top:15px}}.main{{margin-left:0;padding:18px}}.cards{{grid-template-columns:1fr 1fr}}.topbar{{display:block}}}}
-    @media(max-width:520px){{.cards{{grid-template-columns:1fr}}.main{{padding:14px}}.donut-wrap{{flex-direction:column}}}}
+    .side{{position:fixed;z-index:20;inset:0 auto 0 0;width:258px;background:linear-gradient(165deg,#071b4b 0%,#123b88 55%,#245fe0 100%);color:white;padding:22px 15px;box-shadow:12px 0 35px #071b4b25}}
+    .brand{{display:flex;align-items:center;gap:11px;font-size:21px;font-weight:900;padding:8px 10px 24px}}.brand-logo{{width:39px;height:39px;border-radius:12px;background:#ffffff1c;display:grid;place-items:center;font-size:22px}}
+    .role{{margin:0 8px 18px;padding:13px;border-radius:14px;background:#ffffff12;border:1px solid #ffffff18;font-size:12px;color:#cbd8f2}}.role b{{display:block;color:#fff;font-size:13px;margin-top:4px}}
+    .nav{{display:flex;align-items:center;gap:12px;text-decoration:none;color:#dce7ff;padding:12px 13px;border-radius:13px;margin:5px 0;font-weight:650;transition:.18s}}.nav:hover{{background:#ffffff13;color:white;transform:translateX(2px)}}.nav.on{{background:linear-gradient(90deg,#ffffff22,#ffffff0b);color:white;box-shadow:inset 3px 0 #fff}}.nav-icon{{width:24px;text-align:center;font-size:17px}}
+    .logout{{position:absolute;bottom:20px;left:15px;right:15px;background:#ffffff0d!important}}
+    .main{{margin-left:258px;padding:28px;max-width:1600px}}.topbar{{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:24px}}.eyebrow{{font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:var(--blue);font-weight:850}}h1{{margin:4px 0;font-size:31px;letter-spacing:-.6px}}.subtitle{{color:var(--muted);font-size:14px}}.user-pill{{background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px 14px;font-weight:750;box-shadow:0 8px 25px #15264d08}}
+    .hero{{position:relative;overflow:hidden;border-radius:24px;padding:28px 30px;color:#fff;background:linear-gradient(115deg,#1555d8,#643cf2);box-shadow:0 18px 45px #3159c52c;margin-bottom:22px}}.hero:after{{content:'';position:absolute;width:260px;height:260px;border-radius:50%;right:-75px;top:-120px;background:#ffffff12}}.hero h2{{margin:0 0 7px;font-size:25px;position:relative;z-index:1}}.hero p{{margin:0;color:#dce7ff;position:relative;z-index:1}}.hero .mini{{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px;position:relative;z-index:1}}.hero .mini span{{background:#ffffff18;border:1px solid #ffffff22;border-radius:999px;padding:7px 11px;font-size:12px}}
+    .cards{{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin:18px 0 22px}}.card{{position:relative;overflow:hidden;background:#fff;border:1px solid #edf1f7;border-radius:19px;padding:19px;box-shadow:0 10px 32px #14274d0b;min-height:132px}}.card:after{{content:'';position:absolute;width:72px;height:72px;border-radius:50%;right:-28px;bottom:-28px;background:#f2f6ff}}.metric-top{{display:flex;align-items:center;justify-content:space-between;color:var(--muted);font-size:13px;font-weight:750}}.metric-icon{{width:39px;height:39px;border-radius:12px;display:grid;place-items:center;font-size:18px;color:#fff}}.metric-icon.blue{{background:linear-gradient(135deg,#2385ff,#3155e8)}}.metric-icon.green{{background:linear-gradient(135deg,#35c77a,#159c62)}}.metric-icon.orange{{background:linear-gradient(135deg,#ffb52e,#f26b38)}}.metric-icon.red{{background:linear-gradient(135deg,#ff6d83,#d93462)}}.metric-icon.purple{{background:linear-gradient(135deg,#8b5cf6,#5b35dc)}}.card b{{display:block;font-size:30px;line-height:1;margin-top:17px;letter-spacing:-1px}}.trend{{font-size:11px;color:#718096;margin-top:8px}}
+    .grid2{{display:grid;grid-template-columns:1.35fr .85fr;gap:18px}}.panel{{background:#fff;border:1px solid #edf1f7;border-radius:20px;padding:21px;box-shadow:0 10px 32px #14274d0a;margin:0 0 18px}}.panel-head{{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:17px}}.panel h3{{margin:0;font-size:17px}}.panel small{{color:var(--muted)}}
+    .bars{{height:230px;display:flex;align-items:flex-end;gap:12px;padding:12px 5px 0;border-bottom:1px solid var(--line)}}.bar-col{{height:100%;flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:8px}}.bar{{width:100%;max-width:44px;border-radius:10px 10px 3px 3px;background:linear-gradient(180deg,#286ff4,#65a1ff);min-height:5px;transition:.2s}}.bar:hover{{filter:brightness(1.08);transform:translateY(-3px)}}.bar-label{{font-size:11px;color:#8a95a8}}.bar-value{{font-size:10px;color:#5e6b80;font-weight:750}}
+    .donut-wrap{{display:flex;align-items:center;gap:24px;min-height:230px}}.donut{{width:170px;height:170px;border-radius:50%;background:conic-gradient(#22b573 0deg var(--present),#e94b67 var(--present) var(--absent-end),#f3a51c var(--absent-end) 360deg);position:relative;flex:none}}.donut:after{{content:'';position:absolute;inset:32px;background:#fff;border-radius:50%}}.donut-center{{position:absolute;inset:0;display:grid;place-items:center;z-index:1;font-size:22px;font-weight:900}}.legend{{display:grid;gap:12px;width:100%}}.legend-row{{display:flex;justify-content:space-between;gap:15px;font-size:13px}}.dot{{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:7px}}.dot.g{{background:#22b573}}.dot.r{{background:#e94b67}}.dot.o{{background:#f3a51c}}
+    .quick{{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}}.quick a{{text-decoration:none;color:var(--ink);border:1px solid var(--line);border-radius:15px;padding:14px;background:#fbfcff;font-weight:750;transition:.18s}}.quick a:hover{{border-color:#b8cbf7;transform:translateY(-2px);box-shadow:0 8px 20px #153d8510}}.quick span{{display:block;font-size:22px;margin-bottom:7px}}
+    .form{{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}}input,select{{width:100%;padding:12px;border:1px solid #d5dfec;border-radius:11px;font-size:14px;outline:none}}input:focus,select:focus{{border-color:#7ca2f8;box-shadow:0 0 0 3px #2166f315}}button,.btn{{display:inline-block;border:0;background:#2166f3;color:white;padding:11px 15px;border-radius:10px;text-decoration:none;cursor:pointer;font-weight:750}}.danger{{background:#e94b67}}.green{{background:#159b63}}.gray{{background:#667085}}
+    .table{{overflow:auto;background:#fff;border:1px solid #edf1f7;border-radius:18px;box-shadow:0 10px 32px #14274d0a}}table{{width:100%;border-collapse:collapse;min-width:700px}}th,td{{padding:13px;border-bottom:1px solid #edf1f7;text-align:left;font-size:13px}}th{{background:#102f72;color:white;font-size:12px;text-transform:uppercase;letter-spacing:.5px}}tr:hover td{{background:#fbfcff}}.badge{{padding:5px 9px;border-radius:999px;font-weight:750;font-size:11px}}.present{{background:#dcfce7;color:#166534}}.absent{{background:#fee2e2;color:#991b1b}}.late{{background:#fef3c7;color:#92400e}}.tabs{{display:flex;gap:8px;flex-wrap:wrap;margin:15px 0}}.tabs a{{padding:9px 13px;background:white;border:1px solid var(--line);border-radius:10px;text-decoration:none;color:var(--ink)}}.tabs a.sel{{background:#2166f3;color:white;border-color:#2166f3}}
+    @media(max-width:1100px){{.cards{{grid-template-columns:repeat(2,1fr)}}.grid2{{grid-template-columns:1fr}}}}@media(max-width:800px){{.side{{position:static;width:100%;min-height:auto}}.logout{{position:static;margin-top:15px}}.main{{margin-left:0;padding:18px}}.cards{{grid-template-columns:1fr}}.topbar{{align-items:flex-start;flex-direction:column}}.quick{{grid-template-columns:1fr}}}}
     </style></head><body>
-    <aside class="side"><div class="brand"><span class="brand-mark">🏫</span><span>School ERP</span></div><div class="role">Kirish roli:<b>{'👑 ADMIN' if admin else '👨‍🏫 O‘QITUVCHI'}</b></div>{nav}<a class="nav logout" href="/logout"><span class="nav-icon">🚪</span><span>Chiqish</span></a></aside><main class="main">{body}</main></body></html>'''
-
+    <aside class="side"><div class="brand"><div class="brand-logo">🏫</div><span>School ERP</span></div><div class="role">WEB BOSHQARUVI<b>{'👑 ADMIN' if admin else '👨‍🏫 O‘QITUVCHI'}</b></div>{nav}<a class="nav logout" href="/logout"><span class="nav-icon">↪</span><span>Chiqish</span></a></aside><main class="main">{body}</main></body></html>'''
 
 def table(headers, rows):
     h=''.join(f'<th>{esc(x)}</th>' for x in headers); b=''.join('<tr>'+''.join(f'<td>{x}</td>' for x in row)+'</tr>' for row in rows)
@@ -1921,89 +1885,29 @@ async def web_logout(request:Request):
 
 
 @web_app.get('/')
-async def web_root(request:Request):
-    role=web_role(request); return RedirectResponse('/admin' if role=='admin' else '/teacher' if role=='teacher' else '/login',status_code=303)
-
-
-def dashboard_data():
-    today = date.today()
-    conn = db(); c = conn.cursor()
-    daily=[]
-    for offset in range(6,-1,-1):
-        d = today - timedelta(days=offset)
-        c.execute('''SELECT
-            SUM(CASE WHEN status='present' THEN 1 ELSE 0 END) AS present,
-            SUM(CASE WHEN status='absent' THEN 1 ELSE 0 END) AS absent,
-            SUM(CASE WHEN status='late' THEN 1 ELSE 0 END) AS late
-            FROM attendance WHERE date=?''', (str(d),))
-        r=c.fetchone()
-        daily.append({'date':str(d),'label':d.strftime('%d/%m'),'present':int(r['present'] or 0),'absent':int(r['absent'] or 0),'late':int(r['late'] or 0)})
-    c.execute("SELECT COUNT(*) AS n FROM attendance WHERE date=? AND status='present'", (str(today),)); today_present=int(c.fetchone()['n'] or 0)
-    c.execute("SELECT COUNT(*) AS n FROM attendance WHERE date=? AND status='absent'", (str(today),)); today_absent=int(c.fetchone()['n'] or 0)
-    c.execute("SELECT COUNT(*) AS n FROM attendance WHERE date=? AND status='late'", (str(today),)); today_late=int(c.fetchone()['n'] or 0)
+async def web_dashboard(request:Request):
+    role=web_guard(request,['admin','teacher'])
+    if not role:return RedirectResponse('/login',303)
+    current_stats=stats(); paid,pending,pc,pnc=web_payment_stats()
+    total_att=current_stats['present']+current_stats['absent']+current_stats['late']
+    present=current_stats['present']; absent=current_stats['absent']; late=current_stats['late']
+    pct=round(present/total_att*100,1) if total_att else 0
+    present_deg=round((present/total_att*360),1) if total_att else 0
+    absent_end=round(((present+absent)/total_att*360),1) if total_att else 360
+    today=date.today(); labels=[]; vals=[]
+    conn=db(); c=conn.cursor()
+    for i in range(6,-1,-1):
+        d=today-timedelta(days=i); labels.append(d.strftime('%d/%m'))
+        c.execute("SELECT COUNT(*) n FROM attendance WHERE date=? AND status='present'",(str(d),)); vals.append(int(c.fetchone()['n'] or 0))
     conn.close()
-    s=stats(); paid,pending,paid_count,pending_count=web_payment_stats()
-    absent_list=top_absent(5)
-    total_today=today_present+today_absent+today_late
-    present_pct=round(today_present/total_today*100,1) if total_today else 0
-    absent_pct=round(today_absent/total_today*100,1) if total_today else 0
-    late_pct=round(today_late/total_today*100,1) if total_today else 0
-    return s,daily,today_present,today_absent,today_late,total_today,present_pct,absent_pct,late_pct,paid,pending,paid_count,pending_count,absent_list
-
-
-def dashboard_body(role):
-    s,daily,tp,ta,tl,tt,pp,ap,lp,paid,pending,paid_count,pending_count,absent_list=dashboard_data()
-    max_total=max([x['present']+x['absent']+x['late'] for x in daily]+[1])
-    bars=[]
-    for x in daily:
-        p_h=max(5,round(x['present']/max_total*155)) if x['present'] else 3
-        a_h=max(5,round(x['absent']/max_total*155)) if x['absent'] else 3
-        l_h=max(5,round(x['late']/max_total*155)) if x['late'] else 3
-        bars.append(f'''<div class="bar-item"><div class="bar-num">{x['present']+x['absent']+x['late']}</div><div class="bar-track"><div class="bar present" style="height:{p_h}px" title="Keldi: {x['present']}"></div><div class="bar absent" style="height:{a_h}px" title="Kelmadi: {x['absent']}"></div><div class="bar late" style="height:{l_h}px" title="Kechikdi: {x['late']}"></div></div><div class="bar-label">{x['label']}</div></div>''')
-    if tt:
-        present_stop=pp
-        absent_stop=pp+ap
-        donut_style=f'--present:{present_stop}%;--absent:{absent_stop}%;'
-    else:
-        donut_style='--present:100%;--absent:100%;'
-    ranks=''.join(f'''<div class="rank"><div class="rank-no">{i}</div><div><div class="rank-name">{esc(x['full_name'])}</div><div class="rank-class">O‘quvchi ID: {x['student_id']}</div></div><div class="rank-count">{x['total']} marta</div></div>''' for i,x in enumerate(absent_list,1))
-    if not ranks: ranks='<div class="muted" style="padding:18px;text-align:center">Hozircha kelmaganlar bo‘yicha ma’lumot yo‘q 🎉</div>'
-    actions='''<a class="action" href="/students">👥 O‘quvchilarni boshqarish</a><a class="action" href="/attendance">✅ Davomatni ko‘rish</a><a class="action" href="/schedule">📅 Dars jadvali</a><a class="action" href="/reports">📊 Hisobotlar</a>'''
-    if role=='admin': actions+='''<a class="action" href="/payments">💳 Oylik to‘lovlar</a><a class="action" href="/teachers">👨‍🏫 O‘qituvchilar</a>'''
-    return f'''
-    <div class="topbar"><div><div class="eyebrow">School ERP • Boshqaruv markazi</div><h1>Dashboard</h1><div class="subtitle">Bugungi o‘quv jarayonini bitta oynadan nazorat qiling.</div></div></div>
-    <section class="welcome"><h2>{'👑 Admin boshqaruv paneli' if role=='admin' else '👨‍🏫 O‘qituvchi paneli'}</h2><p>Bugun: {date.today().strftime('%Y-%m-%d')} • Davomat, to‘lov va o‘quvchilar holati</p><div class="quick">{actions}</div></section>
-    <div class="cards">
-      <div class="stat blue"><span class="icon">👥</span><div class="label">O‘quvchilar</div><div class="value">{s['students']}</div><div class="mini">Jami o‘quvchilar</div></div>
-      <div class="stat purple"><span class="icon">👨‍🏫</span><div class="label">O‘qituvchilar</div><div class="value">{s['teachers']}</div><div class="mini">Faol o‘qituvchilar</div></div>
-      <div class="stat green"><span class="icon">✅</span><div class="label">Bugun keldi</div><div class="value">{tp}</div><div class="mini">Bugungi davomat</div></div>
-      <div class="stat red"><span class="icon">❌</span><div class="label">Bugun kelmadi</div><div class="value">{ta}</div><div class="mini">Nazorat talab qilinadi</div></div>
-      <div class="stat orange"><span class="icon">⏰</span><div class="label">Kechikdi</div><div class="value">{tl}</div><div class="mini">Bugungi kechikish</div></div>
-      <div class="stat cyan"><span class="icon">📚</span><div class="label">Fanlar</div><div class="value">{s['subjects']}</div><div class="mini">Tizimdagi fanlar</div></div>
-      <div class="stat pink"><span class="icon">💳</span><div class="label">To‘langan</div><div class="value">{paid:,.0f}</div><div class="mini">so‘m • {paid_count} ta to‘lov</div></div>
-      <div class="stat indigo"><span class="icon">⏳</span><div class="label">Kutilayotgan</div><div class="value">{pending:,.0f}</div><div class="mini">so‘m • {pending_count} ta</div></div>
-    </div>
-    <div class="grid2">
-      <section class="panel"><div class="panel-head"><h3>📈 Oxirgi 7 kunlik davomat</h3><small>Yashil — keldi • qizil — kelmadi • sariq — kechikdi</small></div><div class="bar-chart">{''.join(bars)}</div><div class="legend"><span><i class="dot d-green"></i>Keldi</span><span><i class="dot d-red"></i>Kelmadi</span><span><i class="dot d-orange"></i>Kechikdi</span></div></section>
-      <section class="panel"><div class="panel-head"><h3>🎯 Bugungi davomat</h3><small>{tt} ta qayd</small></div><div class="donut-wrap"><div class="donut" style="{donut_style}"><div class="donut-center"><strong>{pp}%</strong><span>QATNASHUV</span></div></div><div class="donut-legend"><div class="legend-row"><i class="dot d-green"></i>Keldi <b>{tp}</b></div><div class="legend-row"><i class="dot d-red"></i>Kelmadi <b>{ta}</b></div><div class="legend-row"><i class="dot d-orange"></i>Kechikdi <b>{tl}</b></div></div></div></section>
-    </div>
-    <div class="grid2" style="margin-top:18px">
-      <section class="panel"><div class="panel-head"><h3>🚨 Ko‘p kelmagan o‘quvchilar</h3><small>Umumiy davomat bo‘yicha</small></div><div class="rank-list">{ranks}</div></section>
-      <section class="panel"><div class="panel-head"><h3>⚡ Tezkor amallar</h3><small>Bir bosishda kerakli bo‘lim</small></div><div class="action-grid">{actions}</div></section>
-    </div>
-    '''
-
-
-@web_app.get('/admin',response_class=HTMLResponse)
-async def web_admin(request:Request):
-    if not admin_only(request): return RedirectResponse('/login',303)
-    return layout('Admin',dashboard_body('admin'),'admin')
-
-
-@web_app.get('/teacher',response_class=HTMLResponse)
-async def web_teacher(request:Request):
-    if not web_guard(request,['teacher']): return RedirectResponse('/login',303)
-    return layout('O‘qituvchi',dashboard_body('teacher'),'teacher')
+    maxv=max(vals) if vals else 1
+    bars=''.join(f'<div class="bar-col"><div class="bar-value">{v}</div><div class="bar" style="height:{max(5,round(v/maxv*175))}px"></div><div class="bar-label">{lab}</div></div>' for lab,v in zip(labels,vals))
+    body=f"""<div class='topbar'><div><div class='eyebrow'>School management platform</div><h1>Dashboard</h1><div class='subtitle'>Ta’lim markazingizni bir qarashda nazorat qiling.</div></div><div class='user-pill'>{'👑 Admin' if role=='admin' else '👨‍🏫 O‘qituvchi'} · Bugun {today.strftime('%d.%m.%Y')}</div></div>
+    <section class='hero'><h2>Assalomu alaykum! 👋</h2><p>Bugungi davomat, o‘quvchilar va to‘lovlarni bitta oynadan kuzating.</p><div class='mini'><span>👥 {current_stats['students']} o‘quvchi</span><span>👨‍🏫 {current_stats['teachers']} o‘qituvchi</span><span>📚 {current_stats['subjects']} fan</span><span>📈 {pct}% qatnashuv</span></div></section>
+    <div class='cards'><div class='card'><div class='metric-top'><span>O‘quvchilar</span><div class='metric-icon blue'>👥</div></div><b>{current_stats['students']}</b><div class='trend'>Jami faol o‘quvchilar</div></div><div class='card'><div class='metric-top'><span>O‘qituvchilar</span><div class='metric-icon purple'>♟</div></div><b>{current_stats['teachers']}</b><div class='trend'>Ta’lim jamoasi</div></div><div class='card'><div class='metric-top'><span>Bugun keldi</span><div class='metric-icon green'>✓</div></div><b>{present}</b><div class='trend'>Davomat qaydlari</div></div><div class='card'><div class='metric-top'><span>Kelmadi</span><div class='metric-icon red'>!</div></div><b>{absent}</b><div class='trend'>E’tibor talab qiluvchi</div></div></div>
+    <div class='grid2'><section class='panel'><div class='panel-head'><div><h3>📈 Davomat dinamikasi</h3><small>Oxirgi 7 kun — kelganlar</small></div><span class='eyebrow'>LIVE</span></div><div class='bars'>{bars}</div></section><section class='panel'><div class='panel-head'><div><h3>🎯 Davomat holati</h3><small>Jami qaydlar bo‘yicha</small></div></div><div class='donut-wrap'><div class='donut' style='--present:{present_deg}deg;--absent-end:{absent_end}deg'><div class='donut-center'>{pct}%</div></div><div class='legend'><div class='legend-row'><span><i class='dot g'></i>Keldi</span><b>{present}</b></div><div class='legend-row'><span><i class='dot r'></i>Kelmadi</span><b>{absent}</b></div><div class='legend-row'><span><i class='dot o'></i>Kechikdi</span><b>{late}</b></div></div></div></section></div>
+    <div class='grid2'><section class='panel'><div class='panel-head'><div><h3>💳 To‘lovlar</h3><small>Moliyaviy holat</small></div><a class='btn green' href='/payments'>Batafsil</a></div><div class='cards' style='margin:0'><div class='card'><div class='metric-top'><span>To‘langan</span><div class='metric-icon green'>✓</div></div><b>{paid:,.0f}</b><div class='trend'>{pc} ta to‘lov</div></div><div class='card'><div class='metric-top'><span>Kutilmoqda</span><div class='metric-icon orange'>◷</div></div><b>{pending:,.0f}</b><div class='trend'>{pnc} ta to‘lov</div></div></div></section><section class='panel'><div class='panel-head'><div><h3>⚡ Tezkor amallar</h3><small>Kerakli bo‘limga tez o‘ting</small></div></div><div class='quick'><a href='/students'><span>👥</span>O‘quvchilar</a><a href='/attendance'><span>✅</span>Davomat</a><a href='/schedule'><span>📅</span>Jadval</a><a href='/reports'><span>📊</span>Hisobot</a></div></section></div>"""
+    return layout('Dashboard',body,role,'dashboard')
 
 
 @web_app.get('/students',response_class=HTMLResponse)
